@@ -1,16 +1,22 @@
 <?php
-//Move upload files to a nice directory
-//$targetPath= "uploads/".($_FILES["inpFile"]["name"]);
-//move_uploaded_file($_FILES["inpFile"]["tmp_name"], $targetPath);
+if(isset($_POST) && $_SERVER['REQUEST_METHOD'] == "POST")
+{
+	$vpb_file_name = strip_tags($_FILES['upload_file']['name']); //File Name
+	$vpb_file_id = strip_tags($_POST['upload_file_ids']); // File id is gotten from the file name
+	$vpb_file_size = $_FILES['upload_file']['size']; // File Size
+	$vpb_uploaded_files_location = 'uploads/'; //This is the directory where uploaded files are saved on your server
+	$vpb_final_location = $vpb_uploaded_files_location . $vpb_file_name; //Directory to save file plus the file to be saved
+	//Without Validation and does not save filenames in the database
+	if(move_uploaded_file(strip_tags($_FILES['upload_file']['tmp_name']), $vpb_final_location))
+	{
+		//Display the file id
+		echo $vpb_file_id;
+	}
+	else
+	{
+		//Display general system error
+		echo 'general_system_error';
+	}
 
-
-$filename1=$_FILES['inpFile']['name'];
-$tmp_name1=$_FILES['inpFile']['tmp_name'];
-//echo $filename1."<br>";
-
-$location='uploads/';
-move_uploaded_file($tmp_name1,$location.$filename1);
-
-
+}
 ?>
-
