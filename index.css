@@ -1,0 +1,29 @@
+.my-block {
+    width: 50%;
+    height: 200px;
+    margin: 20px;
+}
+.upload {
+    margin: 10px;
+}
+.form input {
+    margin: 10px;
+}
+.progress-bar {
+    margin: 10px;
+    background-color: rgb(250, 248, 248);
+    height: 30px;
+    border: solid 2px blue ;
+}
+.bar-fill {
+    width: 0%;
+    background-color:aquamarine; 
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: width 0.25s;
+}
+.bar-text {
+    padding: 5px;
+}
