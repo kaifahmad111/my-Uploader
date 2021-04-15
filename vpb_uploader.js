@@ -74,14 +74,16 @@ function vpb_multiple_file_uploader(vpb_configuration_settings)
 				
 				
 				if(typeof this.vpb_files[i] != undefined && this.vpb_files[i].name != "")
-				{	
+				{		
 					
-
 					
 					if( vpb_file_to_add == "jpg" || vpb_file_to_add == "JPG" || vpb_file_to_add == "jpeg" || vpb_file_to_add == "JPEG" || vpb_file_to_add == "gif" || vpb_file_to_add == "GIF" || vpb_file_to_add == "png" || vpb_file_to_add == "PNG" ) 
 					{
 						//vpb_file_icon = '<img src="images/images_file.gif" align="absmiddle" border="0" alt="" />';
-						vpb_file_icon = '<img src="uploads/'+this.vpb_files[i].name+'" align="ab	smiddle" border="0" alt="" />';
+						//vpb_file_icon = '<img src="uploads/'+this.vpb_files[i].name+'" align="ab	smiddle" border="0" alt="" />';
+						//vpb_file_icon = `<img id="id${i}" src="uploads/${this.vpb_files[i].name}" align="absmiddle" border="0" alt="" />`
+						vpb_file_icon = `<img id="id${i}" src="" align="absmiddle" border="0" alt="" />`
+						
 					}
 					else if( vpb_file_to_add == "doc" || vpb_file_to_add == "docx" || vpb_file_to_add == "rtf" || vpb_file_to_add == "DOC" || vpb_file_to_add == "DOCX" )
 					{
@@ -224,7 +226,17 @@ function vpb_multiple_file_uploader(vpb_configuration_settings)
 	vpb_multiple_file_uploader.prototype.vasPLUS = function(file,file_counter)
 	{
 		if(typeof file[file_counter] != undefined && file[file_counter] != '')
-		{
+		{	
+			var reader = new FileReader();
+					
+					///////////////////
+					reader.onload = function(e) {
+						$(`#id${file_counter}`).attr('src', e.target.result);
+						//$(`#blah`).attr('src', e.target.result);
+					}
+					reader.readAsDataURL(file[file_counter]);
+					///////////////////
+
 			
 			//Use the file names without their extensions as their ids
 			//console.log(file);
