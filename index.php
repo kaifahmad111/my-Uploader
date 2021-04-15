@@ -57,12 +57,13 @@ span{
 	</tbody>
 </table>
 </center>
-	<!-- <div class="progress-bar" id="progressBar"> 
+	<div class="progress-bar" id="progressBar"> 
         <div class="bar-fill">
             <span class="bar-text">0%</span>
         </div>
+		<img src="" alt="" id="blah">
     </div>
-	 -->
+	
 
 </body>
 

@@ -1,4 +1,9 @@
 
+let len=0;
+var percentComplete=0;
+let progBarFill = document.querySelector(".bar-fill");
+let progBarText = progBarFill.querySelector(".bar-text");
+
 function vpb_multiple_file_uploader(vpb_configuration_settings)
 {
 	this.vpb_settings = vpb_configuration_settings;
@@ -17,6 +22,8 @@ function vpb_multiple_file_uploader(vpb_configuration_settings)
 	vpb_multiple_file_uploader.prototype.vpb_show_added_files = function(vpb_value)
 	{
 		this.vpb_files = vpb_value;
+		len=this.vpb_files.length;
+		console.log(len);
 		if(this.vpb_files.length > 0)
 		{
 			var vpb_added_files_displayer = vpb_file_id = "";
@@ -68,15 +75,8 @@ function vpb_multiple_file_uploader(vpb_configuration_settings)
 				
 				if(typeof this.vpb_files[i] != undefined && this.vpb_files[i].name != "")
 				{	
-					// var reader = new FileReader();
-					// reader.onload = function (e) {
-                	// $('#blah').attr('src', e.target.result);
-            		// }
 					
-            		// reader.readAsDataURL(input.files[0]);
-					console.log(this.vpb_files[i]);
-					//console.log(this.vpb_files[i]);
-					//Check for the type of file browsed so as to represent each file with the appropriate file icon
+
 					
 					if( vpb_file_to_add == "jpg" || vpb_file_to_add == "JPG" || vpb_file_to_add == "jpeg" || vpb_file_to_add == "JPEG" || vpb_file_to_add == "gif" || vpb_file_to_add == "GIF" || vpb_file_to_add == "png" || vpb_file_to_add == "PNG" ) 
 					{
@@ -174,6 +174,7 @@ function vpb_multiple_file_uploader(vpb_configuration_settings)
 	//File Reader
 	vpb_multiple_file_uploader.prototype.vpb_read_file = function(vpb_e) {
 		if(vpb_e.target.files) {
+			//console.log(vpb_e.target.files);
 			self.vpb_show_added_files(vpb_e.target.files);
 			self.vpb_browsed_files.push(vpb_e.target.files);
 		} else {
@@ -205,7 +206,9 @@ function vpb_multiple_file_uploader(vpb_configuration_settings)
 	}
 	
 	//Call the uploading function when click on the upload button
-	vpb_multiple_file_uploader.prototype.vpb_submit_added_files = function(){ self.vpb_upload_bgin(); }
+	vpb_multiple_file_uploader.prototype.vpb_submit_added_files = function(){ 
+		
+		self.vpb_upload_bgin(); }
 	
 	//Start uploads
 	vpb_multiple_file_uploader.prototype.vpb_upload_bgin = function() {
@@ -222,7 +225,9 @@ function vpb_multiple_file_uploader(vpb_configuration_settings)
 	{
 		if(typeof file[file_counter] != undefined && file[file_counter] != '')
 		{
+			
 			//Use the file names without their extensions as their ids
+			//console.log(file);
 			var files_name_without_extensions = file[file_counter].name.substr(0, file[file_counter].name.lastIndexOf('.')) || file[file_counter].name;
 			var ids = files_name_without_extensions.replace(/[^a-z0-9\s]/gi, '').replace(/[_\s]/g, '');
 			var vpb_browsed_file_ids = $("#"+this.vpb_settings.vpb_form_id).find("input[type='file']").eq(0).attr("id");
@@ -234,18 +239,50 @@ function vpb_multiple_file_uploader(vpb_configuration_settings)
 				self.vasPLUS(file,file_counter+1);
 			}
 			else
-			{
+			{	
+
 				var dataString = new FormData();
 				dataString.append('upload_file',file[file_counter]);
 				dataString.append('upload_file_ids',ids);
+				//console.log(dataString);
 					
 				$.ajax({
+					////
+					xhr: function() {
+						var xhr = new window.XMLHttpRequest();
+						
+						
+						// Upload progress
+						xhr.upload.addEventListener("progress", function(evt){
+							//console.log(evt);
+							// document.querySelector(".bar-fill").style.width = `0%`; 
+	        				// document.querySelector(".bar-text").textContent = "0%"
+
+							if (evt.lengthComputable) {
+								percentComplete = ((evt.loaded / evt.total)*100)/len;
+								//Do something with upload progress
+								if(percentComplete<=100) {
+									document.querySelector(".bar-fill").style.width = `${Math.ceil((100/len)*file_counter+Number(percentComplete.toFixed(2)))}%`; 
+        							document.querySelector(".bar-text").textContent = `${Math.ceil((100/len)*file_counter+Number(percentComplete.toFixed(2)))}%`; 
+								}
+								//console.log(percentComplete);
+								let per= (100/len)*file_counter+Number(percentComplete.toFixed(2));
+								console.log(per);
+							}
+					   }, false);
+					   return xhr;
+					},
+				
+					///////
 					type:"POST",
 					url:this.vpb_settings.vpb_server_url,
 					data:dataString,
 					cache: false,
 					contentType: false,
 					processData: false,
+					/////////////
+					
+					//////////////
 					beforeSend: function() 
 					{
 						$("#uploading_"+ids).html('<div align="left"><img src="images/loadings.gif" width="80" align="absmiddle" title="Upload...."/></div>');
@@ -253,6 +290,7 @@ function vpb_multiple_file_uploader(vpb_configuration_settings)
 					},
 					success:function(response) 
 					{
+						//console.log(response);	
 						setTimeout(function() {
 							var response_brought = response.indexOf(ids);
 							if ( response_brought != -1) {
@@ -306,3 +344,4 @@ function vpb_remove_this_file(id, filename)
 	}
 	return false;
 }
+
